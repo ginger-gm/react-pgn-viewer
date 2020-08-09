@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "A PGN viewer for React",
   "author": "Ginger GM",
-  "private": true,
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
