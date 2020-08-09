@@ -6,12 +6,12 @@ import PropTypes from 'prop-types'
 import KeyHandler, { KEYDOWN } from 'react-key-handler'
 import styled from 'styled-components'
 import Chessboard from 'react-chessboardjs-wrapper'
+import { isMobile } from 'react-device-detect'
 
 import pgnViewerConfig from './config'
 import * as pgnViewerHelpers from './helpers'
 import GameHeader from './GameHeader'
 import GameText from './GameText'
-import BoardContainer from './BoardContainer'
 import GameTextContainer from './GameTextContainer'
 import PGNViewerContainer from './PGNViewerContainer'
 import GameButtons from './GameButtons'
@@ -462,7 +462,7 @@ class PGNViewer extends Component {
           />
           <PGNViewerContainer ref={this.containerRef}>
             {showGameHeader && game && <GameHeader headers={game.headers} />}
-            <BoardContainer>
+            <div style={{ display: 'flex', width: isMobile ? '100%' : 408 }}>
               <Chessboard
                 animate
                 blackSquareColour={blackSquareColour}
@@ -476,9 +476,10 @@ class PGNViewer extends Component {
                 onInitBoard={this.handleInitBoard}
                 resize
                 whiteSquareColour={whiteSquareColour}
-                width={408}
+                width={isMobile ? boardHeight || 336 : 408}
               />
               {(!boardId || !game) && 'loading...'}
+              {/* {!isMobile && ( */}
               <GameTextContainer>
                 {(boardId && game) ? (
                   <GameText
@@ -494,7 +495,8 @@ class PGNViewer extends Component {
                   'loading...'
                 )}
               </GameTextContainer>
-            </BoardContainer>
+              {/* )} */}
+            </div>
             <div>
               {fen && isEngineEnabled
               && (
@@ -549,7 +551,25 @@ class PGNViewer extends Component {
                 handleToggleEngine={this.handleToggleEngine}
                 isEngineEnabled={isEngineEnabled}
                 isReplayMode={isReplayMode}
+                isMobile={isMobile}
               />
+              {/* {isMobile && (
+                <GameTextContainer>
+                  {(boardId && game) ? (
+                    <GameText
+                      boardId={boardId}
+                      handleMoveClick={this.handleMoveClick}
+                      height={boardHeight}
+                      moves={game.moves}
+                      selectedMoveId={selectedMoveId}
+                      result={game.headers.Result}
+                      width={this.containerRef.current.offsetWidth - boardHeight}
+                    />
+                  ) : (
+                    'loading...'
+                  )}
+                </GameTextContainer>
+              )} */}
             </div>
           </PGNViewerContainer>
         </div>

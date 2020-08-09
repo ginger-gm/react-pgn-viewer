@@ -8,7 +8,7 @@ align-items: center;
 background: #f3f3f3;
 display: flex;
 padding: 0.6rem;
-width: 400px;
+width: ${props => (props.isMobile ? '100%' : '400px')};
 `
 
 const LeftInnerContainer = styled.div`
@@ -35,8 +35,9 @@ const GameButtons = ({
   handleToggleEngine,
   handleToggleOrientation,
   isReplayMode,
+  isMobile,
 }) => (
-  <Container>
+  <Container isMobile={isMobile}>
     <LeftInnerContainer>
       <Button icon="robot" onClick={handleToggleEngine} size="2x" />
       <Button icon="redo" onClick={handleToggleOrientation} size="2x" />
@@ -60,6 +61,7 @@ GameButtons.propTypes = {
   handleToggleEngine: PropTypes.func.isRequired,
   handleToggleOrientation: PropTypes.func.isRequired,
   isReplayMode: PropTypes.bool.isRequired,
+  isMobile: PropTypes.bool.isRequired,
 }
 
 export default GameButtons
