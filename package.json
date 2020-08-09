@@ -25,7 +25,7 @@
     "lint": "esw --ext .jsx --ext .js --color",
     "lint:fix": "npm run lint --fix",
     "prepare": "npm run build",
-    "prerelease": "npm run lint:fix && npm run test:coverage && npm run build",
+    "prerelease": "npm run lint:fix && npm run build",
     "release": "npm publish"
   },
   "dependencies": {

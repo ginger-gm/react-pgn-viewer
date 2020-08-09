@@ -9,10 +9,13 @@ const EVAL_REGEX = new RegExp(`${
 }${/pv (.+)/.source}`)
 
 class UCIEngine extends Component {
-  state = {
-    info: '',
-    pvs: [],
-    status: 'loading', // loading, ready, stopped, working, mate
+  constructor(props) {
+    super(props)
+    this.state = {
+      info: '',
+      pvs: [],
+      status: 'loading', // loading, ready, stopped, working, mate
+    }
   }
 
   componentDidMount() {
@@ -60,7 +63,7 @@ class UCIEngine extends Component {
   // Send 'stop' to engine. Promise resolves in this.processOutput
   // when 'readyok' is received back. A 'bestmove' response in turn
   // calls this.waitForReady()
-  stop = () => new Promise((resolve) => {
+  stop = () => new Promise(resolve => {
     this.setState({ status: 'stopped' }, () => {
       this.EngineWorker.onmessage = e => this.processOutput(e.data, resolve)
       this.sendEngineMessage('stop')
@@ -72,7 +75,8 @@ class UCIEngine extends Component {
   waitForReady = () => {
     const { status } = this.state
     if (status === 'ready') return
-    return new Promise((resolve) => {
+
+    return new Promise(resolve => {
       this.EngineWorker.onmessage = e => this.processOutput(e.data, resolve)
       this.sendEngineMessage('isready')
     })
@@ -80,7 +84,9 @@ class UCIEngine extends Component {
 
   processOutput = (text, rdyResolve = () => {}) => {
     const { debug } = this.props
+    /* eslint-disable no-console */
     if (debug) console.log(text)
+    /* eslint-enable no-console */
 
     if (text === 'readyok') {
       this.setState({ status: 'ready' }, () => rdyResolve())
@@ -140,9 +146,12 @@ class UCIEngine extends Component {
     }
   }
 
-  sendEngineMessage = (text) => {
+  sendEngineMessage = text => {
     const { debug } = this.props
+    /* eslint-disable no-console */
     if (debug) console.log(`[stockfish <<] ${text}`)
+    /* eslint-enable no-console */
+
     return this.EngineWorker.postMessage(text)
   }
 
