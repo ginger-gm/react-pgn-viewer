@@ -1,14 +1,9 @@
 {
-  "name": "react-rollup-boilerplate",
-  "version": "1.2.0",
-  "description": "Boilerplate for writing React Libraries bundled with Rollup.js to commonJs and ES6 Modules and React Styleguidist",
-  "author": "Kai Hotz",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:KaiHotz/react-rollup-boilerplate.git"
-  },
-  "homepage": "https://github.com/KaiHotz/react-rollup-boilerplate",
+  "name": "@gingergm/react-pgn-viewer",
+  "version": "0.1.0",
+  "description": "A PGN viewer for React",
+  "author": "Ginger GM",
+  "license": "UNLICENSED",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
@@ -17,9 +12,7 @@
     "npm": ">=5"
   },
   "scripts": {
-    "dev": "NODE_ENV=development BABEL_ENV=development run-p build:watch start",
-    "start": "NODE_ENV=development BABEL_ENV=development styleguidist server --open",
-    "styleguide:build": "NODE_ENV=production BABEL_ENV=production styleguidist build",
+    "dev": "NODE_ENV=development BABEL_ENV=development run-p build:watch",
     "build": "NODE_ENV=production BABEL_ENV=production rollup -c",
     "build:watch": "rollup -c -w",
     "test": "jest",
@@ -28,11 +21,19 @@
     "lint:fix": "npm run lint --fix",
     "prepare": "npm run build",
     "prerelease": "npm run lint:fix && npm run test:coverage && npm run build",
-    "release": "npm publish",
-    "predeploy": "npm run styleguide:build",
-    "deploy": "gh-pages -d styleguide"
+    "release": "npm publish"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/react-fontawesome": "^0.1.11",
+    "chess.js": "^0.11.0",
+    "react-chessboardjs-wrapper": "^0.4.2",
+    "react-key-handler": "^1.2.0-beta.3",
+    "react-scroll": "^1.8.0",
+    "short-uuid": "^3.1.1",
+    "styled-components": "^5.1.1"
+  },
   "peerDependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
@@ -71,7 +72,6 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^3.0.0",
     "eslint-watch": "^6.0.1",
-    "gh-pages": "^2.2.0",
     "jasmine-expect": "^4.0.3",
     "jest": "^25.2.3",
     "jest-environment-jsdom-fourteen": "^1.0.1",
@@ -84,7 +84,6 @@
     "react": "^16.13.1",
     "react-app-polyfill": "^1.0.6",
     "react-dom": "^16.13.1",
-    "react-styleguidist": "^11.0.4",
     "react-test-renderer": "^16.13.1",
     "rollup": "^2.2.0",
     "rollup-plugin-babel": "^4.4.0",
