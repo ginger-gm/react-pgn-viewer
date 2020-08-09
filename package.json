@@ -5,6 +5,10 @@
   "author": "Ginger GM",
   "private": true,
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ginger-gm-admin/react-pgn-viewer"
+  },
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
