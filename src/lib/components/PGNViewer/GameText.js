@@ -14,13 +14,12 @@ overflow-wrap: break-word;
 padding-left: 0.4em;
 position: relative;
 word-break: break-word;
-width: ${props => props.width}px;
 `
 
 const GameText = ({
-  selectedMoveId, moves, result, handleMoveClick, boardId, height, width,
+  selectedMoveId, moves, result, handleMoveClick, boardId, height,
 }) => (
-  <Container id={`GameText-${boardId}`} height={height} width={width}>
+  <Container id={`GameText-${boardId}`} height={height}>
     <Variation
       boardId={boardId}
       selectedMoveId={selectedMoveId}
@@ -39,7 +38,6 @@ GameText.propTypes = {
   moves: PropTypes.arrayOf(PropTypes.object).isRequired,
   result: PropTypes.string,
   selectedMoveId: PropTypes.string,
-  width: PropTypes.number.isRequired,
 }
 GameText.defaultProps = {
   result: '*',

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types'
 import KeyHandler, { KEYDOWN } from 'react-key-handler'
 import styled from 'styled-components'
 import Chessboard from 'react-chessboardjs-wrapper'
-import { isMobile } from 'react-device-detect'
 
 import pgnViewerConfig from './config'
 import * as pgnViewerHelpers from './helpers'
@@ -55,6 +54,7 @@ class PGNViewer extends Component {
       parsedGames: [], // unextended games from pgn data, used in header dropdown
       isEngineEnabled: false,
       isFocused: false,
+      isMobile: null,
       isReplayMode: false,
       selectedGameIndex: 0,
       selectedMoveId: null,
@@ -64,6 +64,8 @@ class PGNViewer extends Component {
 
   componentDidMount() {
     this._isMounted = true
+    window.addEventListener('resize', this.windowResize)
+    this.windowResize()
     this.loadPGNData()
   }
 
@@ -76,7 +78,15 @@ class PGNViewer extends Component {
 
   componentWillUnmount() {
     this._isMounted = false
+    window.removeEventListener('resize', this.windowResize)
     this.stopReplay()
+  }
+
+  windowResize = () => {
+    const isMobile = (window.innerWidth <= 760)
+    if (isMobile !== this.state.isMobile) {
+      this.setState({ isMobile }, () => this.handleResize())
+    }
   }
 
   loadPGNData = () => {
@@ -344,7 +354,7 @@ class PGNViewer extends Component {
 
   render() {
     const {
-      error, games, isFocused, selectedGameIndex, isEngineEnabled, boardHeight,
+      error, games, isFocused, selectedGameIndex, isEngineEnabled, boardHeight, isMobile,
     } = this.state
     if (error) {
       return (
@@ -462,7 +472,7 @@ class PGNViewer extends Component {
           />
           <PGNViewerContainer ref={this.containerRef}>
             {showGameHeader && game && <GameHeader headers={game.headers} />}
-            <div style={{ display: 'flex', width: isMobile ? '100%' : 408 }}>
+            <div style={{ display: 'flex', width: '100%' }}>
               <Chessboard
                 animate
                 blackSquareColour={blackSquareColour}
@@ -476,26 +486,25 @@ class PGNViewer extends Component {
                 onInitBoard={this.handleInitBoard}
                 resize
                 whiteSquareColour={whiteSquareColour}
-                width={isMobile ? boardHeight || 336 : 408}
+                width={isMobile ? 336 : 408}
               />
               {(!boardId || !game) && 'loading...'}
-              {/* {!isMobile && ( */}
-              <GameTextContainer>
-                {(boardId && game) ? (
-                  <GameText
-                    boardId={boardId}
-                    handleMoveClick={this.handleMoveClick}
-                    height={boardHeight}
-                    moves={game.moves}
-                    selectedMoveId={selectedMoveId}
-                    result={game.headers.Result}
-                    width={this.containerRef.current.offsetWidth - boardHeight}
-                  />
-                ) : (
-                  'loading...'
-                )}
-              </GameTextContainer>
-              {/* )} */}
+              {!isMobile && (
+                <GameTextContainer>
+                  {(boardId && game) ? (
+                    <GameText
+                      boardId={boardId}
+                      handleMoveClick={this.handleMoveClick}
+                      height={boardHeight}
+                      moves={game.moves}
+                      selectedMoveId={selectedMoveId}
+                      result={game.headers.Result}
+                    />
+                  ) : (
+                    'loading...'
+                  )}
+                </GameTextContainer>
+              )}
             </div>
             <div>
               {fen && isEngineEnabled
@@ -553,7 +562,7 @@ class PGNViewer extends Component {
                 isReplayMode={isReplayMode}
                 isMobile={isMobile}
               />
-              {/* {isMobile && (
+              {isMobile && (
                 <GameTextContainer>
                   {(boardId && game) ? (
                     <GameText
@@ -569,7 +578,7 @@ class PGNViewer extends Component {
                     'loading...'
                   )}
                 </GameTextContainer>
-              )} */}
+              )}
             </div>
           </PGNViewerContainer>
         </div>

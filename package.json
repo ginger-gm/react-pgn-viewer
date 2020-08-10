@@ -33,7 +33,6 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "chess.js": "^0.11.0",
     "react-chessboardjs-wrapper": "^0.4.2",
-    "react-device-detect": "^1.13.1",
     "react-key-handler": "^1.2.0-beta.3",
     "react-scroll": "^1.8.0",
     "short-uuid": "^3.1.1",
