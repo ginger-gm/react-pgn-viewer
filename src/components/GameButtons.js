@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import pkg from '../../package.json'
+// import pkg from '../../package.json'
 
 const Container = styled.div`
 align-items: center;
@@ -69,10 +69,10 @@ const GameButtons = React.forwardRef(({
         <Button icon="chevron-left" onClick={handlePreviousMove} />
         <Button icon={isReplayMode ? 'pause' : 'play'} onClick={handleReplay} />
         <Button icon="chevron-right" onClick={handleNextMove} />
-        <Button icon="angle-double-right" onClick={handleGotoEnd} />
-        <a href={pkg.repository.url} target="_blank" rel="noreferrer">
+        <Button icon="angle-double-right" onClick={handleGotoEnd} style={{ marginRight: 0 }} />
+        {/* <a href={pkg.repository.url} target="_blank" rel="noreferrer">
           <Button icon={['fab', 'github']} style={{ marginRight: 0 }} />
-        </a>
+        </a> */}
       </RightInnerContainer>
     </Container>
   )
