@@ -1,13 +1,13 @@
 {
   "name": "@gingergm/react-pgn-viewer",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A PGN viewer for React",
   "author": {
     "name": "GingerGM",
     "email": "admin@gingergm.com",
     "url": "https://gingergm.com"
   },
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ginger-gm/react-pgn-viewer"
