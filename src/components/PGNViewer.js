@@ -22,6 +22,7 @@ const SELECT_GAME = 'SELECT_GAME'
 const SET_ERROR = 'SET_ERROR'
 const SET_FOCUSED = 'SET_FOCUSED'
 const SET_GAMES = 'SET_GAMES'
+const SET_MOBILE = 'SET_MOBILE'
 const SET_REPLAY_DELAY = 'SET_REPLAY_DELAY'
 const SET_SELECTED_MOVE_ID = 'SET_SELECTED_MOVE_ID'
 const TOGGLE_ENGINE = 'TOGGLE_ENGINE'
@@ -36,7 +37,7 @@ const initialState = {
   isEngineEnabled: false,
   isFocused: false,
   isLoading: true,
-  // isMobile: null,
+  isMobile: null,
   replayDelay: null,
   selectedGameIndex: null,
   selectedMoveId: null,
@@ -86,6 +87,13 @@ const reducer = (state, action) => {
       }
     }
 
+    case SET_MOBILE: {
+      return {
+        ...state,
+        isMobile: action.payload,
+      }
+    }
+
     case SET_SELECTED_MOVE_ID: {
       return {
         ...state,
@@ -129,7 +137,7 @@ const PGNViewer = ({
 
   // console.log(state)
   const {
-    boardHeight, error, games, isLoading, replayDelay, selectedGameIndex, selectedMoveId, parsedGames, boardOrientation, isEngineEnabled, isFocused,
+    boardHeight, error, games, isLoading, replayDelay, selectedGameIndex, selectedMoveId, parsedGames, boardOrientation, isEngineEnabled, isFocused, isMobile,
   } = state
   const game = games[selectedGameIndex]
 
@@ -161,6 +169,10 @@ const PGNViewer = ({
       dispatch({
         type: SET_BOARD_HEIGHT,
         payload: width,
+      })
+      dispatch({
+        type: SET_MOBILE,
+        payload: window.innerWidth <= 600,
       })
     } catch (e) {} // eslint-disable-line
   }
@@ -283,7 +295,6 @@ const PGNViewer = ({
   }
 
   useInterval(gotoNextMove, replayDelay)
-
   const handleReplay = () => {
     if (replayDelay) {
       dispatch({ type: SET_REPLAY_DELAY, payload: null })
@@ -409,18 +420,20 @@ const PGNViewer = ({
         }}
       />
       {game && games.length > 1 && (
-        <GameSelect
-          handleChange={handleGameChange}
-          parsedGames={parsedGames}
-          value={selectedGameIndex}
-        />
+        <div style={{ marginBottom: '0.2rem' }}>
+          <GameSelect
+            handleChange={handleGameChange}
+            parsedGames={parsedGames}
+            value={selectedGameIndex}
+          />
+        </div>
       )}
       {game && games.length === 1 && (
       <GameHeader headers={game.headers} />
       )}
       <ReactResizeDetector handleWidth handleHeight onResize={handleResize} />
       <div style={{ display: 'flex' }}>
-        <div style={{ width: '60%' }}>
+        <div style={{ width: isMobile ? '100%' : '60%' }}>
           <Chessboard
             animate
             blackSquareColour={opts.blackSquareColour}
@@ -497,20 +510,34 @@ const PGNViewer = ({
             )}
           />
           )}
+          {isMobile && game && buttonsRef.current && (
+            <div style={{ margin: '0.2rem 0' }}>
+              <GameText
+                boardId={boardIdRef.current}
+                handleMoveClick={handleMoveClick}
+                height={isMobile ? boardHeight / 2 : boardHeight + buttonsRef.current.offsetHeight}
+                moves={game.moves}
+                selectedMoveId={selectedMoveId}
+                result={game.headers.Result}
+              />
+            </div>
+          )}
           <MadeBy />
         </div>
-        <div style={{ width: '40%' }}>
-          {game && buttonsRef.current && (
-          <GameText
-            boardId={boardIdRef.current}
-            handleMoveClick={handleMoveClick}
-            height={boardHeight + buttonsRef.current.offsetHeight}
-            moves={game.moves}
-            selectedMoveId={selectedMoveId}
-            result={game.headers.Result}
-          />
-          )}
-        </div>
+        {!isMobile && (
+          <div style={{ width: '40%' }}>
+            {game && buttonsRef.current && (
+            <GameText
+              boardId={boardIdRef.current}
+              handleMoveClick={handleMoveClick}
+              height={boardHeight + buttonsRef.current.offsetHeight}
+              moves={game.moves}
+              selectedMoveId={selectedMoveId}
+              result={game.headers.Result}
+            />
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

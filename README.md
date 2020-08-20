@@ -4,8 +4,6 @@ WIP. Use at own risk.
 
 ## TODO
 
-- layout for mobile
-
 - clean up code (esp helpers.js)
 - remove inline styles
 - examples
