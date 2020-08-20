@@ -1,6 +1,6 @@
 {
   "name": "@gingergm/react-pgn-viewer",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A PGN viewer for React",
   "author": {
     "name": "GingerGM",

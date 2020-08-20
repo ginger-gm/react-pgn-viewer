@@ -135,11 +135,24 @@ const PGNViewer = ({
   const boardRef = React.useRef(null)
   const buttonsRef = React.useRef(null)
 
-  // console.log(state)
+  /* eslint-disable no-param-reassign */
+  if (opts.blackSquareColour === undefined) opts.blackSquareColour = '#b85649'
+  if (opts.border === undefined) opts.border = 'none'
+  if (opts.showNotation === undefined) opts.showNotation = false
+  if (opts.whiteSquareColour === undefined) opts.whiteSquareColour = '#efd8c0'
+  /* eslint-enable no-param-reassign */
+
   const {
     boardHeight, error, games, isLoading, replayDelay, selectedGameIndex, selectedMoveId, parsedGames, boardOrientation, isEngineEnabled, isFocused, isMobile,
   } = state
   const game = games[selectedGameIndex]
+
+  React.useLayoutEffect(() => {
+    dispatch({
+      type: SET_MOBILE,
+      payload: window.innerWidth <= 600,
+    })
+  }, [])
 
   React.useEffect(() => {
     const loadPGNData = () => {
@@ -572,14 +585,10 @@ PGNViewer.propTypes = {
   pieceTheme: PropTypes.string.isRequired,
   pgnData: PropTypes.string.isRequired,
 }
+
 PGNViewer.defaultProps = {
   enginePath: null,
-  opts: {
-    blackSquareColour: '#b85649',
-    border: 'none',
-    showNotation: false,
-    whiteSquareColour: '#efd8c0',
-  },
+  opts: {},
 }
 
 export default PGNViewer
