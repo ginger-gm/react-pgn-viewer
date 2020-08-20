@@ -70,7 +70,7 @@ const GameButtons = React.forwardRef(({
         <Button icon={isReplayMode ? 'pause' : 'play'} onClick={handleReplay} />
         <Button icon="chevron-right" onClick={handleNextMove} />
         <Button icon="angle-double-right" onClick={handleGotoEnd} />
-        <a href={pkg.repository.url} target="_blank" rel="noreferrer">
+        <a href={pkg.repository.url} target="_blank" rel="noreferrer" style={{ display: 'inline-flex' }}>
           <Button icon={['fab', 'github']} style={{ marginRight: 0 }} />
         </a>
       </RightInnerContainer>
