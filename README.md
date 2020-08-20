@@ -10,7 +10,6 @@ WIP. Use at own risk.
 - readme
 - license
 - tests
-- move repo to https://github.com/ginger-gm/react-pgn-viewer (+ update repository in package.json)
 
 ## Usage
 
