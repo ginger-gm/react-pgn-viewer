@@ -2,9 +2,8 @@
 
 WIP. Use at own risk.
 
-## TODO with refactor
+## TODO
 
-- key handlers
 - layout for mobile
 
 - clean up code (esp helpers.js)

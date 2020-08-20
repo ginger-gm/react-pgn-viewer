@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import React from 'react'
 import PropTypes from 'prop-types'
-// import KeyHandler, { KEYDOWN } from 'react-key-handler'
+import KeyHandler, { KEYDOWN } from 'react-key-handler'
 import Chessboard from 'react-chessboardjs-wrapper'
 import ReactResizeDetector from 'react-resize-detector'
 import styled from 'styled-components'
@@ -20,6 +20,7 @@ import '../lib/fontAwesomeLib'
 const SET_BOARD_HEIGHT = 'SET_BOARD_HEIGHT'
 const SELECT_GAME = 'SELECT_GAME'
 const SET_ERROR = 'SET_ERROR'
+const SET_FOCUSED = 'SET_FOCUSED'
 const SET_GAMES = 'SET_GAMES'
 const SET_REPLAY_DELAY = 'SET_REPLAY_DELAY'
 const SET_SELECTED_MOVE_ID = 'SET_SELECTED_MOVE_ID'
@@ -33,7 +34,7 @@ const initialState = {
   games: [], // extended with extra info, these are used in the viewer
   parsedGames: [], // unextended games from pgn data, used in header dropdown
   isEngineEnabled: false,
-  // isFocused: false,
+  isFocused: false,
   isLoading: true,
   // isMobile: null,
   replayDelay: null,
@@ -59,12 +60,20 @@ const reducer = (state, action) => {
       }
     }
 
-    case SET_ERROR:
+    case SET_ERROR: {
       return {
         ...state,
         error: action.payload,
         isLoading: false,
       }
+    }
+
+    case SET_FOCUSED: {
+      return {
+        ...state,
+        isFocused: action.payload,
+      }
+    }
 
     case SET_GAMES: {
       const { extendedGames: games, parsedGames } = action.payload
@@ -120,7 +129,7 @@ const PGNViewer = ({
 
   // console.log(state)
   const {
-    boardHeight, error, games, isLoading, replayDelay, selectedGameIndex, selectedMoveId, parsedGames, boardOrientation, isEngineEnabled,
+    boardHeight, error, games, isLoading, replayDelay, selectedGameIndex, selectedMoveId, parsedGames, boardOrientation, isEngineEnabled, isFocused,
   } = state
   const game = games[selectedGameIndex]
 
@@ -318,6 +327,10 @@ const PGNViewer = ({
     dispatch({ type: TOGGLE_ENGINE })
   }
 
+  const setFocused = value => {
+    dispatch({ type: SET_FOCUSED, payload: value })
+  }
+
   // Check for dependencies
   if (!window.$) {
     return <div>jQuery not found on page.</div>
@@ -350,7 +363,51 @@ const PGNViewer = ({
   }
 
   return (
-    <div className="ggm-pgn-viewer">
+    <div
+      className="ggm-pgn-viewer"
+      onClick={() => setFocused(true)}
+      onKeyPress={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      onFocus={() => setFocused(true)}
+      role="link"
+      tabIndex={0}
+    >
+      <KeyHandler
+        keyEventName={KEYDOWN}
+        keyValue="ArrowRight"
+        onKeyHandle={e => {
+          if (!isFocused) return
+          e.preventDefault()
+          gotoNextMove()
+        }}
+      />
+      <KeyHandler
+        keyEventName={KEYDOWN}
+        keyValue="ArrowLeft"
+        onKeyHandle={e => {
+          if (!isFocused) return
+          e.preventDefault()
+          gotoPreviousMove()
+        }}
+      />
+      <KeyHandler
+        keyEventName={KEYDOWN}
+        keyValue="ArrowUp"
+        onKeyHandle={e => {
+          if (!isFocused) return
+          e.preventDefault()
+          gotoStart()
+        }}
+      />
+      <KeyHandler
+        keyEventName={KEYDOWN}
+        keyValue="ArrowDown"
+        onKeyHandle={e => {
+          if (!isFocused) return
+          e.preventDefault()
+          gotoEnd()
+        }}
+      />
       {game && games.length > 1 && (
         <GameSelect
           handleChange={handleGameChange}
@@ -476,244 +533,6 @@ const MadeBy = () => (
     .
   </pre>
 )
-
-// const EngineContainer = styled.div`
-// border: 1px solid #f3f3f3;
-// height: (${props => props.multiPv + 1}) * 21;
-// overflow-y: scroll;
-// padding: 0.4em;
-// width: 100%;
-// `
-
-//   setFocused = value => {
-//     this.setState({ isFocused: value })
-//   }
-
-//   handleToggleEngine = () => {
-//     if (this._isMounted) {
-//       this.setState(state => ({
-//         isEngineEnabled: !isEngineEnabled,
-//       }))
-//     }
-//   }
-
-//   render() {
-//     const {
-//       error, games, isFocused, selectedGameIndex, isEngineEnabled, boardHeight, isMobile,
-//     } = this.state
-//     if (error) {
-//       return (
-//         <Error>
-//           Could not render PGN viewer: error parsing PGN data.
-//         </Error>
-//       )
-//     }
-//     const game = games[selectedGameIndex]
-
-//     // we're good to go
-//     const { gameSelectHeader, showGameHeader, pieceTheme } = this.props
-//     const {
-//       boardOrientation, replayDelay, selectedMoveId, boardId, parsedGames,
-//     } = this.state
-
-//     const gameOptions = parsedGames.map((g, i) => {
-//       const { headers } = g
-//       if (headers.White === '?') delete headers.White
-//       if (headers.Black === '?') delete headers.Black
-//       if (headers.Event === '?') delete headers.Event
-//       if (headers.Site === '?') delete headers.Site
-//       if (headers.Round === '?') delete headers.Round
-//       if (headers.Result === '?') delete headers.Result
-//       if (headers.Result === '*') delete headers.Result
-//       if (headers.Date === '?') delete headers.Date
-//       if (headers.Date === '????.??.??') delete headers.Date
-
-//       let text = `${headers.White}`
-//       if (headers.Black) text = `${text} - ${headers.Black}`
-//       if (headers.Event) text = `${text} (${headers.Event}_`
-
-//       return {
-//         key: i,
-//         value: i,
-//         text,
-//       }
-//     })
-
-//     // get board position
-//     let fen = null
-//     let sideToMove
-//     if (game) {
-//       const { flattenedMoves } = game
-//       if (selectedMoveId) {
-//         const move = flattenedMoves.find(m => m.moveId === selectedMoveId)
-//         fen = move.fenAfter
-//       } else {
-//         fen = getStartFen(game)
-//       }
-//       const fenParts = fen.split(' ')
-//       sideToMove = fenParts[1] // eslint-disable-line
-//     }
-
-//     const multiPv = 2
-
-//     return (
-//       <>
-//         {games.length > 1 && (
-//           <>
-//             {gameSelectHeader}
-//             <select
-//               onChange={this.handleGameSelect}
-//               value={selectedGameIndex}
-//             >
-//               {gameOptions.map(o => (
-//                 <option key={o.value} value={o.value}>{o.text}</option>
-//               ))}
-//             </select>
-//           </>
-//         )}
-//         <div
-//           onClick={() => this.setFocused(true)}
-//           onKeyPress={() => this.setFocused(true)}
-//           onBlur={() => this.setFocused(false)}
-//           onFocus={() => this.setFocused(true)}
-//           role="link"
-//           tabIndex={0}
-//         >
-//           <KeyHandler
-//             keyEventName={KEYDOWN}
-//             keyValue="ArrowRight"
-//             onKeyHandle={e => {
-//               if (!isFocused) return
-//               e.preventDefault()
-//               this.gotoNextMove()
-//             }}
-//           />
-//           <KeyHandler
-//             keyEventName={KEYDOWN}
-//             keyValue="ArrowLeft"
-//             onKeyHandle={e => {
-//               if (!isFocused) return
-//               e.preventDefault()
-//               this.gotoPreviousMove()
-//             }}
-//           />
-//           <KeyHandler
-//             keyEventName={KEYDOWN}
-//             keyValue="ArrowUp"
-//             onKeyHandle={e => {
-//               if (!isFocused) return
-//               e.preventDefault()
-//               this.gotoStart()
-//             }}
-//           />
-//           <KeyHandler
-//             keyEventName={KEYDOWN}
-//             keyValue="ArrowDown"
-//             onKeyHandle={e => {
-//               if (!isFocused) return
-//               e.preventDefault()
-//               this.gotoEnd()
-//             }}
-//           />
-//           <PGNViewerContainer ref={this.containerRef}>
-//             {showGameHeader && game && <GameHeader headers={game.headers} />}
-//             <div style={{ display: 'flex' }}>
-//               <div style={{ width: isMobile ? '100%' : '42%' }}>
-//                 <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} />
-//                 <Chessboard
-//                   animate
-//                   blackSquareColour={blackSquareColour}
-//                   border={border}
-//                   config={{
-//                     draggable: false,
-//                     orientation: boardOrientation,
-//                     pieceTheme,
-//                     showNotation: false,
-//                   }}
-//                   onInitBoard={this.handleInitBoard}
-//                   resize
-//                   whiteSquareColour={whiteSquareColour}
-//                   width="100%"
-//                 />
-//                 <GameButtons
-//                   gotoEnd={this.gotoEnd}
-//                   gotoStart={this.gotoStart}
-//                   gotoNextMove={this.gotoNextMove}
-//                   gotoPreviousMove={this.gotoPreviousMove}
-//                   handleReplay={this.handleReplay}
-//                   handleToggleOrientation={this.handleToggleOrientation}
-//                   handleToggleEngine={this.handleToggleEngine}
-//                   isEngineEnabled={isEngineEnabled}
-//                   replayDelay={replayDelay}
-//                   isMobile={isMobile}
-//                 />
-//               </div>
-//               <GameTextContainer height={isMobile ? null : boardHeight}>
-//                 {(boardId && game) ? (
-//                   <GameText
-//                     boardId={boardId}
-//                     handleMoveClick={this.handleMoveClick}
-//                     height={boardHeight}
-//                     moves={game.moves}
-//                     selectedMoveId={selectedMoveId}
-//                     result={game.headers.Result}
-//                   />
-//                 ) : (
-//                   'loading...'
-//                 )}
-//               </GameTextContainer>
-//             </div>
-//             <div>
-//               {fen && isEngineEnabled
-//               && (
-//               <UCIEngine
-//                 // debug
-//                 fen={fen}
-//                 multiPv={multiPv}
-//                 workerPath="/js/stockfish.js"
-//                 render={state => (
-//                   <EngineContainer multiPv={multiPv}>
-//                     <ul size="tiny">
-//                       {info !== '' ? (
-//                         <li>
-//                           {info}
-//                           {' '}
-//                           (web worker)
-//                         </li>
-//                       ) : (
-//                         '...'
-//                       )}
-//                       {(status === 'working' || status === 'mate') && pvs.map((pv, i) => {
-//                         let score
-//                         if (Number(parseFloat(pv.score)) === parseFloat(pv.score)) {
-//                           score = (sideToMove === 'w' ? pv.score : pv.score * -1)
-//                         } else {
-//                           score = pv.score // eslint-disable-line
-//                         }
-
-//                         return (
-//                           <li key={i}>
-//                             <strong>{score}</strong>
-//                             {' '}
-//                             {pv.moves}
-//                           </li>
-//                         )
-//                       })}
-//                       {!(status === 'working' || status === 'mate') && (
-//                         'working...'
-//                       )}
-//                     </ul>
-//                   </EngineContainer>
-//                 )}
-//               />
-//               )}
-//             </div>
-//           </PGNViewerContainer>
-//         </div>
-//       </>
-//     )
-//   }
-// }
 
 PGNViewer.propTypes = {
   enginePath: PropTypes.string,
