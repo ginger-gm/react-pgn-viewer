@@ -16,7 +16,6 @@ font-weight: ${props => (props.isMainline ? 700 : 400)};
 line-height: ${props => (props.isMainline ? '1.46em' : '1.43em')};
 margin-right: ${props => (props.isMainline ? '0.3rem' : '0.2rem')};
 padding: ${props => (props.isMainline ? '0.1rem' : null)};
-//text-decoration: underline;
 `
 
 const Move = ({
