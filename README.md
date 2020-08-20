@@ -2,15 +2,6 @@
 
 WIP. Use at own risk.
 
-## TODO
-
-- clean up code (esp helpers.js)
-- remove inline styles
-- examples
-- readme
-- license
-- tests
-
 ## Usage
 
 `yarn add @gingergm/react-pgn-viewer`

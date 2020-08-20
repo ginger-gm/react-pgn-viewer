@@ -10,7 +10,7 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ginger-gm-admin/react-pgn-viewer"
+    "url": "https://github.com/ginger-gm/react-pgn-viewer"
   },
   "main": "dist/index.js",
   "module": "dist/index.es.js",

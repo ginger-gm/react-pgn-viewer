@@ -7,6 +7,7 @@ import omit from 'lodash/omit'
 import Variation from './Variation'
 
 const Container = styled(props => <Element {...omit(props, ['height', 'width'])} />)`
+border: 1px solid #d3d3d3;
 box-sizing: border-box;
 height: ${props => props.height}px;
 overflow-y: auto;

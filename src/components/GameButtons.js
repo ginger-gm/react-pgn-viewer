@@ -3,13 +3,13 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-// import pkg from '../../package.json'
+import pkg from '../../package.json'
 
 const Container = styled.div`
 align-items: center;
 background: #f3f3f3;
 display: flex;
-padding: 0.5rem 0;
+padding: 0.8rem 0;
 width: ${props => (props.width ? `${props.width}px` : '100%')};
 height: ${props => (props.width ? `${props.width / 10}px` : null)}
 `
@@ -33,7 +33,7 @@ font-size: ${props => props.fontSize || 'inherit'}px
 const Button = styled(FontAwesomeIcon)`
   color: #424242;
   cursor: pointer;
-  margin-right: 0.8rem;
+  margin-right: 1rem;
 
   &:hover {
     color: #212121;
@@ -69,10 +69,10 @@ const GameButtons = React.forwardRef(({
         <Button icon="chevron-left" onClick={handlePreviousMove} />
         <Button icon={isReplayMode ? 'pause' : 'play'} onClick={handleReplay} />
         <Button icon="chevron-right" onClick={handleNextMove} />
-        <Button icon="angle-double-right" onClick={handleGotoEnd} style={{ marginRight: 0 }} />
-        {/* <a href={pkg.repository.url} target="_blank" rel="noreferrer">
+        <Button icon="angle-double-right" onClick={handleGotoEnd} />
+        <a href={pkg.repository.url} target="_blank" rel="noreferrer">
           <Button icon={['fab', 'github']} style={{ marginRight: 0 }} />
-        </a> */}
+        </a>
       </RightInnerContainer>
     </Container>
   )
