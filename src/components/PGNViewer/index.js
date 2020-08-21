@@ -6,128 +6,30 @@ import Chessboard from 'react-chessboardjs-wrapper'
 import ReactResizeDetector from 'react-resize-detector'
 import styled from 'styled-components'
 
-import GameSelect from './GameSelect'
-import GameButtons from './GameButtons'
-import * as h from '../lib/helpers'
-import GameHeader from './GameHeader'
-import GameText from './GameText'
-import UCIEngine from './UCIEngine'
-import pgnParser from '../lib/pgn-parser/pgn-parser'
-import useInterval from '../lib/useInterval'
+import reducer, { actions, initialState } from './reducer'
+import GameSelect from '../GameSelect'
+import GameButtons from '../GameButtons'
+import * as h from '../../lib/helpers'
+import GameHeader from '../GameHeader'
+import GameText from '../GameText'
+import UCIEngine from '../UCIEngine'
+import pgnParser from '../../lib/pgn-parser/pgn-parser'
+import useInterval from '../../lib/useInterval'
 
-import '../lib/fontAwesomeLib'
+import '../../lib/fontAwesomeLib'
 
-const SET_BOARD_HEIGHT = 'SET_BOARD_HEIGHT'
-const SELECT_GAME = 'SELECT_GAME'
-const SET_ERROR = 'SET_ERROR'
-const SET_FOCUSED = 'SET_FOCUSED'
-const SET_GAMES = 'SET_GAMES'
-const SET_MOBILE = 'SET_MOBILE'
-const SET_REPLAY_DELAY = 'SET_REPLAY_DELAY'
-const SET_SELECTED_MOVE_ID = 'SET_SELECTED_MOVE_ID'
-const TOGGLE_ENGINE = 'TOGGLE_ENGINE'
-const TOGGLE_ORIENTATION = 'TOGGLE_ORIENTATION'
-
-const initialState = {
-  boardHeight: null,
-  boardOrientation: 'white',
-  error: false,
-  games: [], // extended with extra info, these are used in the viewer
-  parsedGames: [], // unextended games from pgn data, used in header dropdown
-  isEngineEnabled: false,
-  isFocused: false,
-  isLoading: true,
-  isMobile: null,
-  replayDelay: null,
-  selectedGameIndex: null,
-  selectedMoveId: null,
-}
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case SELECT_GAME: {
-      return {
-        ...state,
-        replayDelay: null,
-        selectedGameIndex: action.payload,
-        selectedMoveId: null,
-      }
-    }
-
-    case SET_BOARD_HEIGHT: {
-      return {
-        ...state,
-        boardHeight: action.payload,
-      }
-    }
-
-    case SET_ERROR: {
-      return {
-        ...state,
-        error: action.payload,
-        isLoading: false,
-      }
-    }
-
-    case SET_FOCUSED: {
-      return {
-        ...state,
-        isFocused: action.payload,
-      }
-    }
-
-    case SET_GAMES: {
-      const { extendedGames: games, parsedGames } = action.payload
-
-      return {
-        ...state,
-        isLoading: false,
-        games,
-        parsedGames,
-      }
-    }
-
-    case SET_MOBILE: {
-      return {
-        ...state,
-        isMobile: action.payload,
-      }
-    }
-
-    case SET_SELECTED_MOVE_ID: {
-      return {
-        ...state,
-        selectedMoveId: action.payload,
-      }
-    }
-
-    case TOGGLE_ENGINE: {
-      return {
-        ...state,
-        isEngineEnabled: !state.isEngineEnabled,
-      }
-    }
-
-    case TOGGLE_ORIENTATION: {
-      return {
-        ...state,
-        boardOrientation: state.boardOrientation === 'white' ? 'black' : 'white',
-      }
-    }
-
-    case SET_REPLAY_DELAY: {
-      return {
-        ...state,
-        replayDelay: action.payload,
-      }
-    }
-
-    default:
-      return state
-  }
-}
-
-const MOBILE_BREAKPOINT = 600
+const {
+  SET_BOARD_HEIGHT,
+  SELECT_GAME,
+  SET_ERROR,
+  SET_FOCUSED,
+  SET_GAMES,
+  SET_MOBILE,
+  SET_REPLAY_DELAY,
+  SET_SELECTED_MOVE_ID,
+  TOGGLE_ENGINE,
+  TOGGLE_ORIENTATION,
+} = actions
 
 const PGNViewer = ({
   enginePath, pgnData, pieceTheme, opts,
@@ -141,6 +43,8 @@ const PGNViewer = ({
   /* eslint-disable no-param-reassign */
   if (opts.blackSquareColour === undefined) opts.blackSquareColour = '#b85649'
   if (opts.border === undefined) opts.border = 'none'
+  if (opts.mobileBreakpoint === undefined) opts.mobileBreakpoint = 600
+  if (opts.showGameHeader === undefined) opts.showGameHeader = true
   if (opts.showNotation === undefined) opts.showNotation = false
   if (opts.whiteSquareColour === undefined) opts.whiteSquareColour = '#efd8c0'
   /* eslint-enable no-param-reassign */
@@ -181,7 +85,7 @@ const PGNViewer = ({
     if (!containerRef.current) return
     dispatch({
       type: SET_MOBILE,
-      payload: containerRef.current.offsetWidth < MOBILE_BREAKPOINT,
+      payload: containerRef.current.offsetWidth < opts.mobileBreakpoint,
     })
   }
 
@@ -446,7 +350,12 @@ const PGNViewer = ({
           />
         </div>
       )}
-      {game && games.length === 1 && <GameHeader headers={game.headers} />}
+      {game && games.length === 1 && opts.showGameHeader && (
+        <GameHeader
+          headers={game.headers}
+          width={isMobile ? boardHeight : containerRef.current.offsetWidth}
+        />
+      )}
       <ReactResizeDetector handleWidth handleHeight onResize={handleResize} />
       <div style={{ display: 'flex' }}>
         <div style={{ width: isMobile ? '100%' : '60%' }}>
@@ -582,6 +491,8 @@ PGNViewer.propTypes = {
   opts: PropTypes.shape({
     border: PropTypes.string,
     blackSquareColour: PropTypes.string,
+    mobileBreakpoint: PropTypes.number,
+    showGameHeader: PropTypes.bool,
     showNotation: PropTypes.bool,
     whiteSquareColour: PropTypes.string,
   }),
