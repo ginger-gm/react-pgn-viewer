@@ -6,7 +6,7 @@ WIP. Use at own risk.
 
 `yarn add @gingergm/react-pgn-viewer`
 
-Requires chessboard.js and jQuery to available on the window object.
+Requires [chessboard.js](https://chessboardjs.com/) and jQuery to be available on the window object.
 
 ```jsx
 const pgnData = `
@@ -53,5 +53,6 @@ allows the Blind Swine mate Swiderski,R-Nimzowitsch,A Barmen 1905} *
 By no means a definitive list!
 
 - Allow custom styling, custom `<GameSelect />` component
+- Don't show game text if there are no moves
 - Examples
 - Tests
