@@ -127,6 +127,8 @@ const reducer = (state, action) => {
   }
 }
 
+const MOBILE_BREAKPOINT = 600
+
 const PGNViewer = ({
   enginePath, pgnData, pieceTheme, opts,
 }) => {
@@ -134,6 +136,7 @@ const PGNViewer = ({
   const boardIdRef = React.useRef(null)
   const boardRef = React.useRef(null)
   const buttonsRef = React.useRef(null)
+  const containerRef = React.useRef(null)
 
   /* eslint-disable no-param-reassign */
   if (opts.blackSquareColour === undefined) opts.blackSquareColour = '#b85649'
@@ -146,13 +149,6 @@ const PGNViewer = ({
     boardHeight, error, games, isLoading, replayDelay, selectedGameIndex, selectedMoveId, parsedGames, boardOrientation, isEngineEnabled, isFocused, isMobile,
   } = state
   const game = games[selectedGameIndex]
-
-  React.useLayoutEffect(() => {
-    dispatch({
-      type: SET_MOBILE,
-      payload: window.innerWidth <= 600,
-    })
-  }, [])
 
   React.useEffect(() => {
     const loadPGNData = () => {
@@ -176,19 +172,27 @@ const PGNViewer = ({
   }, [selectedGameIndex])
 
   const handleResize = () => {
-    try {
     // '.board-b72b1' is a magic classname from chessboard.js. We have jQuery, so might as well use it.
-      const width = window.$(`#board-${boardIdRef.current}`).find('.board-b72b1').width()
-      dispatch({
-        type: SET_BOARD_HEIGHT,
-        payload: width,
-      })
-      dispatch({
-        type: SET_MOBILE,
-        payload: window.innerWidth <= 600,
-      })
-    } catch (e) {} // eslint-disable-line
+    const width = window.$(`#board-${boardIdRef.current}`).find('.board-b72b1').width()
+    dispatch({
+      type: SET_BOARD_HEIGHT,
+      payload: width,
+    })
+    if (!containerRef.current) return
+    dispatch({
+      type: SET_MOBILE,
+      payload: containerRef.current.offsetWidth < MOBILE_BREAKPOINT,
+    })
   }
+
+  React.useEffect(() => {
+    if (!boardRef.current) return
+    boardRef.current.resize()
+    // After a board redraw, the following need resetting:
+    h.setWhiteSquareColour(boardIdRef.current, opts.whiteSquareColour, opts.blackSquareColour)
+    h.setBlackSquareColour(boardIdRef.current, opts.whiteSquareColour, opts.blackSquareColour)
+    h.setBorder(boardIdRef.current, opts.border)
+  }, [isMobile])
 
   const handleInitBoard = (board, boardId) => {
     boardIdRef.current = boardId
@@ -393,6 +397,7 @@ const PGNViewer = ({
       onKeyPress={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       onFocus={() => setFocused(true)}
+      ref={containerRef}
       role="link"
       tabIndex={0}
     >
@@ -441,9 +446,7 @@ const PGNViewer = ({
           />
         </div>
       )}
-      {game && games.length === 1 && (
-      <GameHeader headers={game.headers} />
-      )}
+      {game && games.length === 1 && <GameHeader headers={game.headers} />}
       <ReactResizeDetector handleWidth handleHeight onResize={handleResize} />
       <div style={{ display: 'flex' }}>
         <div style={{ width: isMobile ? '100%' : '60%' }}>

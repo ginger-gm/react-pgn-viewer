@@ -6,6 +6,35 @@ const scroll = Scroll.scroller
 
 const translator = short()
 
+export const isTouchDevice = () => 'ontouchstart' in document.documentElement
+
+export const setWhiteSquareColour = (boardId, whiteSquareColour, blackSquareColour) => {
+  const { $ } = window
+  // Magic class name from chessboard.js
+  $(`#board-${boardId} .white-1e1d7`)
+    .css({
+      background: whiteSquareColour,
+      color: blackSquareColour,
+    })
+}
+
+export const setBlackSquareColour = (boardId, whiteSquareColour, blackSquareColour) => {
+  const { $ } = window
+  // Magic class name from chessboard.js
+  $(`#board-${boardId} .black-3c85d`)
+    .css({
+      background: blackSquareColour,
+      color: whiteSquareColour,
+    })
+}
+
+export const setBorder = (boardId, border) => {
+  const { $ } = window
+  // Magic class name from chessboard.js
+  $(`#board-${boardId} .board-b72b1`)
+    .css('border', border)
+}
+
 export const getStartFen = game => (Object.keys(game.headers).includes('SetUp') && Object.keys(game.headers).includes('FEN')
   ? game.headers.FEN
 // note the below must be the full fen string and not 'start',
