@@ -9,6 +9,8 @@ WIP. Use at own risk.
 Requires [chessboard.js](https://chessboardjs.com/) and jQuery to be available on the window object.
 
 ```jsx
+import PGNViewer from '@gingergm/react-pgn-viewer'
+
 const pgnData = `
 [Event "?"]
 [Site "?"]
