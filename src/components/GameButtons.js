@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import pkg from '../../package.json'
-
 const Container = styled.div`
 align-items: center;
 background: #f3f3f3;
@@ -30,10 +28,10 @@ padding: 0 0.5rem;
 font-size: ${props => props.fontSize || 'inherit'}px
 `
 
-const Button = styled(FontAwesomeIcon)`
+export const Button = styled(FontAwesomeIcon)`
   color: #424242;
   cursor: pointer;
-  margin-right: 1rem;
+  margin-right: ${props => (props.$marginRight !== undefined ? props.$marginRight : '1rem')};
 
   &:hover {
     color: #212121;
@@ -69,10 +67,7 @@ const GameButtons = React.forwardRef(({
         <Button icon="chevron-left" onClick={handlePreviousMove} />
         <Button icon={isReplayMode ? 'pause' : 'play'} onClick={handleReplay} />
         <Button icon="chevron-right" onClick={handleNextMove} />
-        <Button icon="angle-double-right" onClick={handleGotoEnd} />
-        <a href={pkg.repository.url} target="_blank" rel="noreferrer" style={{ display: 'inline-flex' }}>
-          <Button icon={['fab', 'github']} style={{ marginRight: 0 }} />
-        </a>
+        <Button icon="angle-double-right" onClick={handleGotoEnd} $marginRight={0} />
       </RightInnerContainer>
     </Container>
   )

@@ -15,6 +15,7 @@ import GameText from '../GameText'
 import UCIEngine from '../UCIEngine'
 import pgnParser from '../../lib/pgn-parser/pgn-parser'
 import useInterval from '../../lib/useInterval'
+import Footer from './Footer'
 
 import '../../lib/fontAwesomeLib'
 
@@ -259,6 +260,16 @@ const PGNViewer = ({
     dispatch({ type: TOGGLE_ENGINE })
   }
 
+  const handleDownload = () => {
+    const element = document.createElement('a')
+    const file = new Blob([pgnData], { type: 'text/plain' })
+    element.href = URL.createObjectURL(file)
+    element.download = 'game.pgn'
+    document.body.appendChild(element) // Required for this to work in FireFox
+    element.click()
+    element.remove()
+  }
+
   const setFocused = value => {
     dispatch({ type: SET_FOCUSED, payload: value })
   }
@@ -447,7 +458,6 @@ const PGNViewer = ({
               />
             </div>
           )}
-          <MadeBy />
         </div>
         {!isMobile && (
           <div style={{ width: '40%' }}>
@@ -464,6 +474,7 @@ const PGNViewer = ({
           </div>
         )}
       </div>
+      <Footer handleDownload={handleDownload} />
     </div>
   )
 }
@@ -476,15 +487,6 @@ overflow-y: scroll;
 padding: 0.4em;
 width: ${props => props.width}px;
 `
-
-const MadeBy = () => (
-  <pre style={{ fontSize: 'small', margin: 0 }}>
-    Made by
-    {' '}
-    <a href="https://gingergm.com" target="_blank" rel="noreferrer">GingerGM</a>
-    .
-  </pre>
-)
 
 PGNViewer.propTypes = {
   enginePath: PropTypes.string,
